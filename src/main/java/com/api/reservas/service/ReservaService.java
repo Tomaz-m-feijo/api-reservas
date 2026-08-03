@@ -66,4 +66,12 @@ public class ReservaService {
             throw new IllegalArgumentException("A sala já possui uma reserva com sobreposição de horário.");
         }
     }
+
+    public java.util.List<ReservaDTO> listarReservas() {
+        return repository.buscarTodas();
+    }
+
+    public void limparReservas() {
+        repository.limparTodas();
+    }
 }

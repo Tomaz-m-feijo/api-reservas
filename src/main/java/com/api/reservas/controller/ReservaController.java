@@ -31,4 +31,20 @@ public class ReservaController {
     public void criarReserva(@Valid @RequestBody ReservaDTO reserva) {
         service.criarReserva(reserva);
     }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Listar todas as reservas", description = "Retorna todas as reservas atualmente armazenadas em memória.")
+    @ApiResponse(responseCode = "200", description = "Lista de reservas retornada com sucesso")
+    public java.util.List<ReservaDTO> listarReservas() {
+        return service.listarReservas();
+    }
+
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Limpar reservas", description = "Apaga todas as reservas armazenadas em memória.")
+    @ApiResponse(responseCode = "200", description = "Reservas apagadas com sucesso")
+    public void limparReservas() {
+        service.limparReservas();
+    }
 }
