@@ -50,7 +50,7 @@ public class ReservaService {
 
         long minutos = Duration.between(dto.inicio(), dto.fim()).toMinutes();
         if (minutos < 30 || minutos > 120) {
-            throw new IllegalArgumentException("A duração da reserva deve ser de no mínimo 30 minutos e no máximo 2 horas.");
+            throw new IllegalArgumentException("A duração da reserva deve ser de no mínimo 30 minutos e no máximo 2 horas. duração inserida: " + minutos);
         }
         if (dto.inicio().getMinute() % 30 != 0) {
             throw new IllegalArgumentException("O horário de início deve ocorrer em múltiplos de 30 minutos.");
@@ -61,8 +61,8 @@ public class ReservaService {
         LocalTime limiteInicio = LocalTime.of(8, 0);
         LocalTime limiteFim = LocalTime.of(18, 0);
 
-        if (horaInicio.isBefore(limiteInicio) || horaFim.isAfter(limiteFim) ||
-                (horaFim.equals(limiteFim) && dto.fim().getSecond() > 0)) {
+
+        if (horaInicio.isBefore(limiteInicio) || horaFim.isAfter(limiteFim)) {
             throw new IllegalArgumentException("A reserva deve ocorrer entre 08:00 e 18:00 do mesmo dia.");
         }
 
@@ -70,7 +70,8 @@ public class ReservaService {
             throw new IllegalArgumentException("A reserva deve iniciar e terminar no mesmo dia.");
         }
 
-        boolean sobreposicao = repository.buscarTodas().stream()
+
+        boolean sobreposicao = repository.buscarPorData(dto.inicio().toLocalDate()).stream()
                 .filter(r -> r.sala().equals(dto.sala()))
                 .anyMatch(r -> dto.inicio().isBefore(r.fim()) && dto.fim().isAfter(r.inicio()));
 
