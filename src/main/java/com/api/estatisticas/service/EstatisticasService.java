@@ -21,10 +21,7 @@ public class EstatisticasService {
     public EstatisticasDTO calcularEstatisticasDoDia() {
         LocalDate hoje = LocalDate.now();
 
-        // Puxa os dados direto do banco compartilhado
-        List<ReservaDTO> reservasDoDia = repository.buscarTodas().stream()
-                .filter(r -> r.inicio().toLocalDate().equals(hoje))
-                .toList();
+        List<ReservaDTO> reservasDoDia = repository.buscarPorData(hoje);
 
         if (reservasDoDia.isEmpty()) {
             return new EstatisticasDTO(0, 0, 0, 0.0, 0);
