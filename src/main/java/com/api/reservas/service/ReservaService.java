@@ -3,15 +3,18 @@ package com.api.reservas.service;
 import com.api.reservas.dto.ReservaDTO;
 import com.api.reservas.repository.ReservaRepository;
 import org.springframework.stereotype.Service;
+
 import java.time.Duration;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Service
 public class ReservaService {
 
     private final ReservaRepository repository;
+
     private static final Set<String> SALAS_VALIDAS = Set.of(
             "A101", "A102", "A103", "B201", "B202", "B203", "C301", "C302"
     );
@@ -23,6 +26,15 @@ public class ReservaService {
     public synchronized void criarReserva(ReservaDTO reserva) {
         validarRegrasDeNegocio(reserva);
         repository.salvar(reserva);
+
+    }
+
+    public List<ReservaDTO> listarReservas() {
+        return repository.buscarTodas();
+    }
+
+    public void limparReservas() {
+        repository.limparTodas();
     }
 
     private void validarRegrasDeNegocio(ReservaDTO dto) {
@@ -65,13 +77,5 @@ public class ReservaService {
         if (sobreposicao) {
             throw new IllegalArgumentException("A sala já possui uma reserva com sobreposição de horário.");
         }
-    }
-
-    public java.util.List<ReservaDTO> listarReservas() {
-        return repository.buscarTodas();
-    }
-
-    public void limparReservas() {
-        repository.limparTodas();
     }
 }

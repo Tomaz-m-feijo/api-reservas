@@ -1,4 +1,4 @@
-package com.api.reservas.exception;
+package com.api.core.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
