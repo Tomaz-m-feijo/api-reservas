@@ -4,20 +4,13 @@ import com.api.reservas.dto.ReservaDTO;
 import com.api.reservas.repository.ReservaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.context.ApplicationEventPublisher; // Import necessário
 
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import java.util.List;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class ReservaServiceTest {
 
@@ -27,21 +20,22 @@ class ReservaServiceTest {
     @BeforeEach
     void setUp() {
         repository = mock(ReservaRepository.class);
+
         service = new ReservaService(repository);
     }
 
     @Test
-    void deveCriarReservaComSucesso() {
-        // Reserva válida amanhã às 14:00 até 15:00
+    void deveCriarReservaComSucessoEDispararEvento() {
         OffsetDateTime inicio = OffsetDateTime.now().plusDays(1).withHour(14).withMinute(0).withSecond(0).withNano(0);
         ReservaDTO reserva = new ReservaDTO("A101", "Maria", inicio, inicio.plusHours(1));
 
         when(repository.buscarTodas()).thenReturn(List.of());
 
         assertDoesNotThrow(() -> service.criarReserva(reserva));
-        verify(repository, times(1)).salvar(reserva);
-    }
 
+        verify(repository, times(1)).salvar(reserva);
+
+    }
     @Test
     void naoDevePermitirSalaInvalida() {
         OffsetDateTime inicio = OffsetDateTime.now().plusDays(1).withHour(14).withMinute(0).withSecond(0).withNano(0);
@@ -53,7 +47,6 @@ class ReservaServiceTest {
 
     @Test
     void naoDevePermitirReservaForaDoHorarioComercial() {
-        // Reserva às 07:00 (antes das 08:00)
         OffsetDateTime inicio = OffsetDateTime.now().plusDays(1).withHour(7).withMinute(0).withSecond(0).withNano(0);
         ReservaDTO reserva = new ReservaDTO("A101", "Maria", inicio, inicio.plusHours(1));
 
@@ -68,7 +61,6 @@ class ReservaServiceTest {
 
         when(repository.buscarTodas()).thenReturn(List.of(existente));
 
-        // Tenta reservar das 14:30 às 15:30 na mesma sala
         ReservaDTO nova = new ReservaDTO("A101", "Maria", inicio.plusMinutes(30), inicio.plusMinutes(90));
 
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> service.criarReserva(nova));
@@ -93,12 +85,10 @@ class ReservaServiceTest {
 
     @Test
     void deveRetornarListaVaziaQuandoNaoHouverReservasNaListagem() {
-        //Simula o repositório vazio
         when(repository.buscarTodas()).thenReturn(List.of());
 
         List<ReservaDTO> resultado = service.listarReservas();
 
-        //Verifica se a lista retornada está vazia
         assertTrue(resultado.isEmpty());
         verify(repository, times(1)).buscarTodas();
     }
@@ -107,7 +97,6 @@ class ReservaServiceTest {
     void deveLimparTodasAsReservas() {
         service.limparReservas();
 
-        //Verifica se o serviço repassou a ordem de limpeza para o repositório exatamente uma vez
         verify(repository, times(1)).limparTodas();
     }
 

@@ -1,7 +1,7 @@
 package com.api.reservas.controller;
 
 import com.api.reservas.dto.ReservaDTO;
-import com.api.reservas.exception.GlobalExceptionHandler;
+import com.api.core.exception.GlobalExceptionHandler;
 import com.api.reservas.service.ReservaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
