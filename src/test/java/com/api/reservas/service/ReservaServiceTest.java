@@ -4,7 +4,6 @@ import com.api.reservas.dto.ReservaDTO;
 import com.api.reservas.repository.ReservaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.ApplicationEventPublisher; // Import necessário
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -59,7 +58,7 @@ class ReservaServiceTest {
         OffsetDateTime inicio = OffsetDateTime.now().plusDays(1).withHour(14).withMinute(0).withSecond(0).withNano(0);
         ReservaDTO existente = new ReservaDTO("A101", "João", inicio, inicio.plusHours(1));
 
-        when(repository.buscarTodas()).thenReturn(List.of(existente));
+        when(repository.buscarPorData(inicio.toLocalDate())).thenReturn(List.of(existente));
 
         ReservaDTO nova = new ReservaDTO("A101", "Maria", inicio.plusMinutes(30), inicio.plusMinutes(90));
 
